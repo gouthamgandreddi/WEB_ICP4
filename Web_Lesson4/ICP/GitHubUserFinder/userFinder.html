@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>GIt user finder</title>
+</head>
+<body>
+<div class="jumbotron text-center">
+    <h1 style="font-size:200%">Github User bios</h1>
+    <p id="content">You need to enter the user's Github userid and we provide the user information</p>
+</div>
+
+<div class="container" id="mainContent">
+    <div>
+
+        <input id="data" class="form-control" placeholder="User name-tag">
+        <button class="btn btn-primary" type="button" onclick="loadDoc()">Request data</button>
+
+    </div>
+<p id="demo"></p>
+<script>
+    function loadDoc() {
+        var input_value = document.getElementById('data').value;
+        console.log("user values " + input_value);
+        var url = "https://api.github.com/users/";
+        var userUrl = url+input_value;
+        console.log("final url - "+userUrl);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+
+                document.getElementById("demo").innerText = "Below is the user Info you are looking for !!";
+
+                var y= JSON.parse(this.responseText);
+                console.log("y " + y  );
+                var name = "<p id='name'> Name : <span>"+y.login+"</span></p>"
+                console.log(name);
+                var id = "<p id='userid'> Id :  <span>"+y.id+"</span></p>"
+                console.log(id);
+                var nodeID = "<p> Node Id : <span >"+y.node_id+"</span></p>"
+                console.log(nodeID);
+
+                var public_repos = "<p id='publicrepos'> Public Repos: <span>"+y.public_repos+"</span></p>"
+                console.log(public_repos);
+
+                var public_gists = "<p id='publicgists'> Public Gists : <span>"+y.public_gists+"</span></p>"
+                console.log(public_gists);
+                var followers = "<p id='followers'> Followers : <span>"+y.followers+"</span></p>"
+                console.log(followers);
+                var following = "<p id='following'> Following : <span>"+y.following+"</span></p>"
+                console.log(following);
+
+                var avatarImage = y.avatar_url;
+                var avatar_url = "<img id='following' src='"+avatarImage+"' style='float: right; width: 250px;height:250px'>"
+                $('img').css('src', 'url(' + avatarImage + ')');
+
+                $("p").css({"background-color": "yellow", "font-size": "200%"});
+                $("#content").css({"background-color": "green", "font-size": "200%"});
+
+                $("body #demo").append(avatar_url,name, id, nodeID,public_repos,public_gists,followers,following);
+
+
+
+
+            }
+            if (this.status == 404) {
+                console.log(this.responseText);
+                var y= JSON.parse(this.responseText);
+                console.log("invalid user response form server - "+y);
+                $("#content").css({"background-color": "red", "font-size": "200%"});
+                alert("no such user");
+                document.getElementById("demo").innerText = "No such user, give a username which exists";
+
+            }
+        };
+        xhttp.open("GET", userUrl, true);
+        xhttp.send();
+    }
+</script>
+</div>
+</body>
+</html>
